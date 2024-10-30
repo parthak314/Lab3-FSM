@@ -89,6 +89,18 @@ Then we design the test bench which:
 
 Finally making the required changes to `doit.sh`, we are ready to test the light strip, which works as expected. 
 
+We can add a 1 second delay in C++ using the following libraries and the line:
+```c++
+#include <iostream>
+#include <chrono>
+#include <thread>
+
+std::this_thread::sleep_for(std::chrono::seconds(1));
+```
+
+
+
+
 ---
 ## Task 3
 
