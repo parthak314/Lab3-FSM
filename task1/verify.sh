@@ -1,5 +1,7 @@
 #!/bin/bash
 
+~/Documents/iac/lab0-devtools/tools/attach_usb.sh
+
 # Translate Verilog -> C++ including testbench
 verilator   -Wall --trace \
             -cc lfsr.sv \

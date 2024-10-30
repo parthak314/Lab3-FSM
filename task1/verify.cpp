@@ -2,6 +2,7 @@
 #include "Vdut.h"
 #include "verilated.h"
 #include "verilated_vcd_c.h"
+#include "vbuddy.cpp"
 
 #include <memory>
 
@@ -30,6 +31,7 @@ public:
     {
         top->clk = 0;
         top->rst = 0;
+        // top->en = vbdFlag();
         top->en = 1;
     }
 
