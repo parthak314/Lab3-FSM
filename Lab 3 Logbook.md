@@ -155,4 +155,8 @@ So whenever `tick` is high, f1_fsm is run and goes to the next state.
 The test bench only contains the line as above (from f1_fsm) but all variables from f1_fsm and `clktick` are initialised.
 
 ---
-## Task 4
+## Task 4 - Full implementation of F1 starting light
+The final part of labs combines all the previous tasks. It uses `lfsr.sv` whose output is the input to `delay.sv`. We then use a MUX and depending on the value of `cmd_seq`, there is either a 1 second delay using `clktick.sv` (if 1) or there is a `trigger` signal and counts down for a specific number of clock cycles.
+This needs to match the following diagram:
+<p align="center"> <img src="images/F1_full.jpg" /> </p>
+
