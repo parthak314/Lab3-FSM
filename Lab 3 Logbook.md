@@ -98,6 +98,28 @@ We can add a 1 second delay in C++ using the following libraries and the line:
 std::this_thread::sleep_for(std::chrono::seconds(1));
 ```
 
+We can make this more efficient by using this style:
+``` systemVerilog
+always_comb begin
+    if (en) begin
+        case (current_state)
+            S_0:    next_state = S_1;
+            S_1:    next_state = S_2;
+            S_2:    next_state = S_3;
+            S_3:    next_state = S_4;
+            S_4:    next_state = S_5;
+            S_5:    next_state = S_6;
+            S_6:    next_state = S_7;
+            S_7:    next_state = S_8;
+            S_8:    next_state = S_0;
+            default: next_state = S_0;
+        endcase
+    end else begin
+        next_state = current_state; // Remain in the current state if `en` is low
+    end
+end
+```
+
 ---
 ## Task 3 - Exploring the clktick.sv and the delay.sv modules
 We now aim to create a delay using System Verilog and not use any in built functions in C++.
@@ -159,4 +181,24 @@ The test bench only contains the line as above (from f1_fsm) but all variables f
 The final part of labs combines all the previous tasks. It uses `lfsr.sv` whose output is the input to `delay.sv`. We then use a MUX and depending on the value of `cmd_seq`, there is either a 1 second delay using `clktick.sv` (if 1) or there is a `trigger` signal and counts down for a specific number of clock cycles.
 This needs to match the following diagram:
 <p align="center"> <img src="images/F1_full.jpg" /> </p>
+
+#### `delay.sv`
+When `trigger` is asserted, it starts counting for `K` clock cycles, then `time_out` goes high for 1 clock cycle.
+The differences between this and `clktick.sv` are:
+1. `trigger` which is edge driven instead of `en`
+2. FSM can only be triggered after `trigger_signal` is 0
+
+#### `f1_fsm.sv`
+This now needs to include a trigger input with 2 additional output signals:
+1. `cmd_seq` is high during the sequential logic execution of `data_out[7:0]`
+2. `cmd_delay` triggers the start of `delay.sv`
+
+The 7 bit LFSR may be needed to provide a random delay for all 7 bits to go from `S_8` (all LED on) to `S_0` (all LED off). This is randomised since LFSR utilises a Pseudo Random Binary Sequence (PRBS).
+
+#### Changes to test bench
+This is to measure the reaction time
+1. When all lights are OFF, after a random delay, `vbdInitWathc()` function is used to start the stopwatch.
+2. The user reacts to this by pressing the switch as quickly as possible and Vbuddy records the elapsed time.
+3. The test bench calls `vbdElapsed()` to read the reaction time in milliseconds.
+4. The test bench reports this by sending it to Vbuddy as a message on the TFT screen.
 
