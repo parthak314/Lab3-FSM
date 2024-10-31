@@ -117,6 +117,42 @@ Setting the metronome to 60bpm, we can acquire a value for `N` as `29`. This is 
 
 The next step is to implement the following design which combines `clktick.sv` with `f1_fsm.sv` to add a manual 1 second delay as opposed to using C++ libraries.
 
+<p align="center"> <img src="images/f1_sequence.jpg" /> </p>
+
+Previously we created `f1_fsm_tb.cpp` and `f1_fsm.sv` in task 2 and `clktick.sv` and `clktick_tb.cpp` were provided in the previous step.
+As per the diagram above, we create a `top.sv` file which combines these two together.
+The key components of each file can be seen below:
+
+For f1_fsm (test bench):
+```c++
+vbdBar(top->data_out & 0xFF);
+```
+
+For clktick.sv:
+```systemVerilog
+if (rst) begin
+        tick <= 1'b0;
+        count <= N;  
+        end
+    else if (en) begin
+        if (count == 0) begin
+            tick <= 1'b1;
+            count <= N;
+            end
+        else begin
+            tick <= 1'b0;
+            count <= count - 1'b1;
+            end
+        end
+```
+
+We can merge these together by using `top.sv`  with the key line connecting both being:
+```systemverilog
+    .en         (tick),
+```
+So whenever `tick` is high, f1_fsm is run and goes to the next state.
+
+The test bench only contains the line as above (from f1_fsm) but all variables from f1_fsm and `clktick` are initialised.
 
 ---
 ## Task 4
