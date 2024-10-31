@@ -98,11 +98,25 @@ We can add a 1 second delay in C++ using the following libraries and the line:
 std::this_thread::sleep_for(std::chrono::seconds(1));
 ```
 
-
-
-
 ---
-## Task 3
+## Task 3 - Exploring the clktick.sv and the delay.sv modules
+We now aim to create a delay using System Verilog and not use any in built functions in C++.
+
+This is achieved by using `clktick.sv` and `delay.sv`.
+The test bench flashes the LEDs at a rate determined by N, which needs to be calibrated as per the device's clock to achieve a 1 second time period.
+
+Breaking down `clktick.sv`, we see that it has the interface signals, `clk`, `rst`, `en`, `N`, `tick` (with only tick as the output).
+It also utilises `count` although it is local to the file.
+This makes use of sequential logic to:
+- set `tick` to `0` and `count` to `N` is `rst` is high.
+- otherwise, if `en` is high, then:
+	- if `count` = 0, `tick` = `1`, `count` = `N`
+	- if `count` != 0, `tick` = `0`, `count` is decremented by `1`
+
+Setting the metronome to 60bpm, we can acquire a value for `N` as `29`. This is equivalent to a tick period of 1 second.
+
+The next step is to implement the following design which combines `clktick.sv` with `f1_fsm.sv` to add a manual 1 second delay as opposed to using C++ libraries.
+
 
 ---
 ## Task 4
