@@ -27,7 +27,7 @@ int main(int argc, char **argv, char **env) {
   top->clk = 1;
   top->rst = 0;
   top->en = vbdFlag();
-  top->N = vbdValue();
+  top->N = vbdValue(); // 29
 
   // run simulation for MAX_SIM_CYC clock cycles
   for (simcyc=0; simcyc<MAX_SIM_CYC; simcyc++) {
